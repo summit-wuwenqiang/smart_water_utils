@@ -1,0 +1,19 @@
+server:
+  port: 22233
+spring:
+  profiles:
+    active: dev
+    include: common
+  application:
+    name: "cbb-water-data-clean"
+  datasource:
+    hikari:
+      maximum-pool-size: 150
+      connection-timeout: 60000
+      minimum-idle: 10
+      idle-timeout: 60000
+
+mybatis-plus:
+  mapper-locations: classpath:com/summit/content/*/mapper/*.xml
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

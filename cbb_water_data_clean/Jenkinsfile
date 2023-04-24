@@ -1,0 +1,30 @@
+pipeline {
+    agent any
+    stages {
+        stage('Build') {
+            steps {
+                echo 'Building...'
+                sh './mvnw package'
+            }
+        }
+        stage('Build Image') {
+            steps {
+                echo 'Build Image...'
+                sh '''
+                docker build -f Dockerfile -t *****/*****:latest .
+                docker login -u **** -p *****
+                docker push *****/*****:latest
+                docker rmi *****/*****:latest
+                '''
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo 'Deploying....'
+                sh '''
+                docker stack deploy -c docker-compose.yml ******
+                '''
+            }
+        }
+    }
+}

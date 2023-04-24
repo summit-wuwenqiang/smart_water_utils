@@ -1,0 +1,20 @@
+version: '2'
+services:
+  backend:
+    build:
+      context: ../
+      dockerfile: Dockerfile
+    image: ${project_name}/backend:1.0
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "${docker_web_port}:${docker_web_port}"
+    volumes:
+      - ./logs:/opt/App/logs
+    user: root
+    networks:
+      - summitui_default
+networks:
+  summitui_default:
+    external: true

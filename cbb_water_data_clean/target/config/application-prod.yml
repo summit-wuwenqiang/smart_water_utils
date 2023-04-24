@@ -1,0 +1,59 @@
+# 生产环境，以服务器环境变量为主，进行配置，并统一环境变量
+# 尤其是多服务推荐以该配置进行部署
+server:
+  # 如果是非docker,则使用随机端口的方式
+  port: ${docker_web_port:0}
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://${cbb_db_host:localhost}:${cbb_mysql_port:49999}/web_service_skeleton?createDatabaseIfNotExist=true&useSSL=false&useUnicode=yes&characterEncoding=UTF-8
+    username: root
+    password: Summit2017
+    initialization-mode: always
+    # 启动自动执行sql 脚本
+    schema:
+      - classpath:db/V1.2__data_test.sql
+    data:
+      - classpath:db/V1.2__data_test.sql
+    # 错误是否继续执行
+    continue-on-error: true
+
+  redis:
+    host: "${cbb_db_host:localhost}"
+    port: 10001
+eureka:
+  instance:
+    #使用IP注册服务
+    prefer-ip-address: true
+    # ip-address: "${cbb_db_host:localhost}"
+    instance-id: ${spring.application.name}:${random.value}
+  client:
+    healthcheck:
+      enabled: true
+    serviceUrl:
+      defaultZone: http://ucp:Summit2018@${cbb_registry_host:45000}:${cbb_registry_port:45000}/eureka/
+
+
+# 根据实体生成表结构
+actable:
+  # 是否开启实体映射表结构
+  enabled: true
+  table:
+    # none    系统不做任何处理
+    # create  会破坏原有数据
+    # update   该操作不会破坏原有数据（删除和更新字段会破坏原有数据）
+    # add 新增表/新增字段/新增索引/新增唯一约束的功能，不做做修改和删除
+    auto: update
+  model:
+    # 扫描实体包路径
+    pack: com.summit.content.*.entity
+  database:
+    # 数据库类型
+    type: mysql
+
+### 通用文件
+summit:
+  file:
+    # 项目文件 直接放入到 resources/file 下，并指定名称，多个用逗号隔开
+    project:
+      file-name: test.docx

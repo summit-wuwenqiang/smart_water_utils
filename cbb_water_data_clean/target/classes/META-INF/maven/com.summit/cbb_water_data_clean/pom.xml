@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.summit</groupId>
+    <!--  需保证唯一  -->
+    <artifactId>cbb_water_data_clean</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <properties>
+        <!-- 项目名称 -->
+        <projectName>cbb公共组件项目</projectName>
+        <!-- 项目标识符，唯一且别用中文 -->
+        <projectCode>cbb</projectCode>
+        <!-- 项目负责人 -->
+        <projectDutyUserName>cyy</projectDutyUserName>
+        <!-- 当前项目模块名称 -->
+        <moduleName>cbb项目模板</moduleName>
+        <!-- 当前项目标识符,唯一且别用中文  全公司唯一 -->
+        <moduleCode>${project.artifactId}_master</moduleCode>
+        <!-- 阶段性日志描述 -->
+        <moduleDescription>维护中</moduleDescription>
+        <!--公共组件common包发布版本号-->
+        <cbb.common.version>1.5.0-SNAPSHOT</cbb.common.version>
+
+
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.compilerVersion>1.8</maven.compiler.compilerVersion>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <spring-cloud.version>Finchley.SR2</spring-cloud.version>
+    </properties>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.summit</groupId>
+                <artifactId>cbb_common</artifactId>
+                <version>${cbb.common.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+    <dependencies>
+        <!-- springcloud 公共配置 -->
+        <dependency>
+            <groupId>com.summit</groupId>
+            <artifactId>cbb_common_springcloud</artifactId>
+            <version>${cbb.common.version}</version>
+        </dependency>
+        <!-- 代码生成 及数据库生成 -->
+        <dependency>
+            <groupId>com.summit</groupId>
+            <artifactId>cbb_common_generate</artifactId>
+            <version>${cbb.common.version}</version>
+        </dependency>
+        <!-- 公共组件服务之间调用 -->
+        <dependency>
+            <groupId>com.summit</groupId>
+            <artifactId>cbb_common_remote_api</artifactId>
+            <version>${cbb.common.version}</version>
+        </dependency>
+
+        <!-- 公共的excel 工具 -->
+        <dependency>
+            <groupId>com.summit</groupId>
+            <artifactId>cbb_common_excel</artifactId>
+            <version>${cbb.common.version}</version>
+        </dependency>
+        <!-- 公共文件管理 -->
+        <dependency>
+            <groupId>com.summit</groupId>
+            <artifactId>cbb_common_file</artifactId>
+            <version>${cbb.common.version}</version>
+        </dependency>
+
+
+
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+    </dependencies>
+    <build>
+        <finalName>backend</finalName>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>src/main/java/</directory>
+                <includes>
+                    <include>**/*.xml</include>
+                </includes>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <encoding>UTF-8</encoding>
+                            <outputDirectory>${project.build.directory}/config</outputDirectory>
+                            <!--将以下文件复制到config文件夹下 -->
+                            <resources>
+                                <resource>
+                                    <directory>src/main/resources</directory>
+                                    <includes>
+                                        <include>logback.xml</include>
+                                        <include>*.properties</include>
+                                        <include>*.yml</include>
+                                        <include>db/*.sql</include>
+                                        <include>**/*.xls</include>
+                                    </includes>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- maven 插件发布软件版本 -->
+            <plugin>
+                <groupId>com.summit</groupId>
+                <artifactId>cbb_maven_software</artifactId>
+                <version>2.0-SNAPSHOT</version>
+                <configuration>
+                    <!-- 项目名称 -->
+                    <projectName>${projectName}</projectName>
+                    <!-- 项目标识符，唯一且别用中文,建议和钉钉项目编码一致 -->
+                    <projectCode>${projectCode}</projectCode>
+                    <!-- 项目负责人 -->
+                    <projectDutyUserName>${projectDutyUserName}</projectDutyUserName>
+
+                    <!-- 当前项目模块名称 -->
+                    <moduleName>${moduleName}</moduleName>
+                    <!-- 当前项目标识符,唯一且别用中文  全公司唯一 -->
+                    <moduleCode>${moduleCode}</moduleCode>
+                    <!-- 当前项目版本 -->
+                    <moduleVersion>1.0</moduleVersion>
+                    <moduleDescription>${moduleDescription}</moduleDescription>
+                    <!-- 当前项目版本，自动日期类别后缀，相同会进行覆盖-->
+                    <moduleVersionDatePattern>yyyyMM</moduleVersionDatePattern>
+                    <url>http://192.168.140.155:43000/api/component/project/save/file</url>
+                </configuration>
+            </plugin>
+            <!-- 控制依赖Jar的拷贝 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                            <overWriteReleases>false</overWriteReleases>
+                            <overWriteSnapshots>false</overWriteSnapshots>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>com.summit.MainAction</mainClass>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <!-- 如果不加这一句则依赖的SNAPSHOT的jar包就会表现为MANIFEST.MF中的
+                           Class-Path: lib/facede-user-1.0-20160512.093945-1.jar
+                           但是打包到../lib/facede-user-1.0-SNAPSHOT.jar下面包,这样就会出现找不到类的情况 -->
+                            <useUniqueVersions>false</useUniqueVersions>
+                        </manifest>
+                        <manifestEntries>
+                            <Class-Path>config/</Class-Path>
+                        </manifestEntries>
+                    </archive>
+                    <!--不将以下文件打入Jar包内 -->
+                    <excludes>
+                        <exclude>*.properties</exclude>
+                        <exclude>*.yml</exclude>
+                        <exclude>logback.xml</exclude>
+                        <exclude>db/</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skipTests>true</skipTests>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>summit</id>
+            <name>summit</name>
+            <url>http://192.168.140.212/repository/summit-group/</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <repositories>
+        <repository>
+            <id>summit</id>
+            <name>summit</name>
+            <url>http://192.168.140.212/repository/summit-group/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </repository>
+    </repositories>
+
+</project>
